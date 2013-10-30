@@ -1,0 +1,222 @@
+/*
+VideoJS Default Styles (http://videojs.com)
+Version 3.2.0
+*/
+ 
+div.dokuwiki.video-js {
+   display: none; 
+}
+
+div.dokuwiki .video-js.alternatetext{
+ 
+}
+ 
+/* Playback technology elements expand to the width/height of the containing div. <video> or <object> */
+div.dokuwiki.video-js.vjs-tech {   display: none;  }
+
+/* Fix for Firefox 9 fullscreen (only if it is enabled). Not needed when checking fullScreenEnabled. */
+div.dokuwiki .video-js:-moz-full-screen {   display: none;  }
+
+/* Fullscreen Styles */
+div.dokuwiki body.vjs-full-window {
+  display: none; 
+}
+div.dokuwiki .video-js.vjs-fullscreen {
+  display: none; 
+}
+div.dokuwiki .video-js:-webkit-full-screen {
+  display: none; 
+}
+
+/* Poster Styles */
+div.dokuwiki .vjs-poster {
+  display: none; 
+}
+
+/* Text Track Styles */
+/* Overall track holder for both captions and subtitles */
+div.dokuwiki .video-js .vjs-text-track-display {   display: none; }
+/* Individual tracks */
+div.dokuwiki .video-js .vjs-text-track {
+  display: none; 
+}
+div.dokuwiki .video-js .vjs-subtitles {   display: none; }
+div.dokuwiki .video-js .vjs-captions {   display: none; }
+div.dokuwiki .vjs-tt-cue {   display: none;  }
+
+/* Fading sytles, used to fade control bar. */
+div.dokuwiki .vjs-fade-in {
+  display: none; 
+}
+div.dokuwiki .vjs-fade-out {
+   display: none; 
+}
+
+/* DEFAULT SKIN (override in another file to create new skins)
+================================================================================
+Instead of editing this file, I recommend creating your own skin CSS file to be included after this file,
+so you can upgrade to newer versions easier. You can remove all these styles by removing the 'vjs-default-skin' class from the tag. */
+
+/* The default control bar. Created by bar.js */
+div.dokuwiki .vjs-default-skin {
+   display: none; 
+   weight:
+}
+
+/* The default control bar. Created by bar.js */
+div.dokuwiki .vjs-default-skin .vjs-controls {
+   display: none; 
+}
+
+/* General styles for individual controls. */
+div.dokuwiki .vjs-default-skin .vjs-control {
+  display: none; 
+}
+
+ 
+/* Hide control text visually, but have it available for screenreaders: h5bp.com/v */
+div.dokuwiki .vjs-default-skin .vjs-control-text {   display: none;  }
+
+
+/* Play/Pause
+-------------------------------------------------------------------------------- */
+div.dokuwiki .vjs-default-skin .vjs-play-control {   display: none; }
+/* Play Icon */
+div.dokuwiki .vjs-default-skin.vjs-paused .vjs-play-control div {   display: none; }
+div.dokuwiki .vjs-default-skin.vjs-playing .vjs-play-control div {  display: none;  }
+
+/* Rewind
+-------------------------------------------------------------------------------- */
+.vjs-default-skin .vjs-rewind-control {   display: none;  }
+.vjs-default-skin .vjs-rewind-control div {   display: none; }
+
+/* Volume/Mute
+-------------------------------------------------------------------------------- */
+div.dokuwiki .vjs-default-skin .vjs-mute-control { display: none;  }
+div.dokuwiki .vjs-default-skin .vjs-mute-control div {   display: none; }
+div.dokuwiki .vjs-default-skin .vjs-mute-control.vjs-vol-0 div {   display: none;  }
+div.dokuwiki .vjs-default-skin .vjs-mute-control.vjs-vol-1 div {  display: none; }
+div.dokuwiki .vjs-default-skin .vjs-mute-control.vjs-vol-2 div {   display: none;  }
+
+
+div.dokuwiki .vjs-default-skin .vjs-volume-control {   display: none; }
+div.dokuwiki .vjs-default-skin .vjs-volume-bar {
+  display: none; 
+}
+div.dokuwiki .vjs-default-skin .vjs-volume-level {
+  display: none; 
+}
+div.dokuwiki .vjs-default-skin .vjs-volume-handle {
+   display: none; 
+}
+
+/* Progress
+-------------------------------------------------------------------------------- */
+div.dokuwiki .vjs-default-skin div.vjs-progress-control {
+  display: none; 
+}
+
+/* Box containing play and load progresses. Also acts as seek scrubber. */
+div.dokuwiki .vjs-default-skin .vjs-progress-holder {
+  display: none; 
+}
+div.dokuwiki .vjs-default-skin .vjs-progress-holder .vjs-play-progress,
+div.dokuwiki .vjs-default-skin .vjs-progress-holder .vjs-load-progress { /* Progress Bars */
+  display: none; 
+}
+
+div.dokuwiki .vjs-default-skin .vjs-play-progress {
+  display: none; 
+}
+div.dokuwiki .vjs-default-skin .vjs-load-progress {
+  display: none; 
+}
+
+div.dokuwiki .vjs-default-skin div.vjs-seek-handle {
+  display: none; 
+}
+/* Time Display
+-------------------------------------------------------------------------------- */
+div.dokuwiki .vjs-default-skin .vjs-time-controls {
+  display: none; 
+}
+
+div.dokuwiki .vjs-default-skin .vjs-current-time {   display: none;  }
+
+div.dokuwiki .vjs-default-skin .vjs-duration {   display: none; }
+div.dokuwiki .vjs-default-skin .vjs-remaining-time {   display: none;  }
+
+div.dokuwiki .vjs-time-divider { display:none; }
+
+div.dokuwiki .vjs-default-skin .vjs-time-control {   display: none;  }
+div.dokuwiki .vjs-default-skin .vjs-time-control span {   display: none;  }
+
+/* Fullscreen
+-------------------------------------------------------------------------------- */
+div.dokuwiki .vjs-secondary-controls {   display: none; }
+
+div.dokuwiki .vjs-default-skin .vjs-fullscreen-control {   display: none;  }
+div.dokuwiki .vjs-default-skin .vjs-fullscreen-control div {   display: none; }
+
+div.dokuwiki .vjs-default-skin.vjs-fullscreen .vjs-fullscreen-control div {   display: none;  }
+
+
+/* Big Play Button (at start)
+---------------------------------------------------------*/
+div.dokuwiki .vjs-default-skin .vjs-big-play-button {
+  display: none; 
+}
+ 
+div.dokuwiki .vjs-default-skin div.vjs-big-play-button span {
+  display: none; 
+}
+
+/* Loading Spinner
+---------------------------------------------------------*/
+/* CSS Spinners by Kilian Valkhof - http://kilianvalkhof.com/2010/css-xhtml/css3-loading-spinners-without-images/ */
+div.dokuwiki .vjs-loading-spinner {
+  display: none; 
+}
+ 
+ 
+/* Each circle */
+div.dokuwiki div.vjs-loading-spinner .ball1 {   display: none;  }
+
+div.dokuwiki div.vjs-loading-spinner .ball2 {   display: none;  }
+
+div.dokuwiki div.vjs-loading-spinner .ball3 {   display: none;  }
+
+div.dokuwiki div.vjs-loading-spinner .ball4 {   display: none;  }
+
+div.dokuwiki div.vjs-loading-spinner .ball5 {   display: none;  }
+
+div.dokuwiki div.vjs-loading-spinner .ball6 {   display: none;  }
+
+div.dokuwiki div.vjs-loading-spinner .ball7 {   display: none;  }
+
+div.dokuwiki div.vjs-loading-spinner .ball8 {   display: none;  }
+
+/* Menu Buttons (Captions/Subtitles/etc.)
+-------------------------------------------------------------------------------- */
+div.dokuwiki .vjs-default-skin .vjs-menu-button {
+display: none; 
+}
+/* Button Icon */
+div.dokuwiki .vjs-default-skin .vjs-menu-button div { display: none;  }
+ 
+/* Button Pop-up Menu */
+div.dokuwiki .vjs-default-skin .vjs-menu-button ul {
+  display: none; 
+}
+
+div.dokuwiki .vjs-default-skin .vjs-menu-button ul li { 	display:none; }
+div.dokuwiki .vjs-default-skin .vjs-menu-button ul li.vjs-selected { 	display:none; }
+ 
+div.dokuwiki .vjs-default-skin .vjs-menu-button ul li.vjs-menu-title {
+	display:none;
+}
+
+/* Subtitles Button */
+div.dokuwiki .vjs-default-skin .vjs-captions-button div { 	display:none;}
+div.dokuwiki .vjs-default-skin .vjs-chapters-button div { 	display:none; }
+div.dokuwiki .vjs-default-skin .vjs-chapters-button ul { 	display:none; }
