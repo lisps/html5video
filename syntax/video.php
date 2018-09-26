@@ -27,7 +27,7 @@ class syntax_plugin_html5video_video extends DokuWiki_Syntax_Plugin {
     }
 
     public function getPType() {
-        return 'block';
+        return 'normal';
     }
 
     public function getSort() {
@@ -36,143 +36,174 @@ class syntax_plugin_html5video_video extends DokuWiki_Syntax_Plugin {
  
     public function connectTo($mode) { 
 		// {file}.mp4?{width}x{height}?{file}|{alternatetext}
-		$this->Lexer->addSpecialPattern('\{\{[^}]*(?:(?:mp4)|(?:ogv)|(?:webm))(?:\?(?:\d{2,4}x\d{2,4})?(?:\&[^\}]{1,255}.jpg|\&[^\}]{1,255}.png|\&[^\}]{1,255}.gif)?)? ?\|?[^\}]{1,255}\}\}',$mode,'plugin_html5video_video');
+		$this->Lexer->addSpecialPattern('\{\{[^\}]+\.mp4[^\}]*\}\}',$mode,'plugin_html5video_video');
     }
 
+    /**
+     * mostly copied from handler.php -> Doku_Handler_Parse_Media()
+     */
     public function handle($match, $state, $pos, Doku_Handler $handler){
-        $params = substr($match, strlen('{{'), - strlen('}}')); //Strip markup
-		 
-		// removing optional '|' without alternate text
-		if( substr($params, -1) == '|' ) {
-			$params = substr($params, 0, -1);  
-		} else {
-			// get alternate text next to '|'
-			if(strpos ($params, "|")) {  
-				$alternatetext = substr($params, strpos ($params, "|")+1); 
-				$params = substr($params, 0, strpos ($params, "|")); 
-			} 
-		}
-	
-        if(strpos($params, ' ') === 0) { // Space as first character
-            if(substr_compare($params, ' ', -1, 1) === 0) { // Space a front and back = centered
-                $params = trim($params);
-                $params = 'center?' . $params;
-            } 
-            else { // Only space at front = right-aligned
-                $params = trim($params);
-                $params = 'right?' . $params;
-            }
+        
+        
+        // Strip the opening and closing markup
+        $link = preg_replace(array('/^\{\{/','/\}\}$/u'),'',$match);
+
+        // Split title from URL
+        $link = explode('|',$link,2);
+
+        // Check alignment
+        $ralign = (bool)preg_match('/^ /',$link[0]);
+        $lalign = (bool)preg_match('/ $/',$link[0]);
+
+        // Logic = what's that ;)...
+        if ( $lalign & $ralign ) {
+            $align = 'center';
+        } else if ( $ralign ) {
+            $align = 'right';
+        } else if ( $lalign ) {
+            $align = 'left';
+        } else {
+            $align = NULL;
         }
-        elseif(substr_compare($params, ' ', -1, 1) === 0) { // Space only as last character = left-aligned
-            $params = trim($params);
-            $params = 'left?' . $params;
+
+        // The title...
+        if ( !isset($link[1]) ) {
+            $link[1] = NULL;
         }
-        else { // No space padding = inline
-            $params = 'inline?' . $params;
+
+        //remove aligning spaces
+        $link[0] = trim($link[0]);
+
+        //split into src and parameters (using the very last questionmark)
+        $pos = strrpos($link[0], '?');
+        if($pos !== false){
+            $src   = substr($link[0],0,$pos);
+            $param = substr($link[0],$pos+1);
+        }else{
+            $src   = $link[0];
+            $param = '';
         }
-		
-		// push alternatetext to params
-		$params = $params . '?' . $alternatetext;		
-		
-        return array(state, explode('?', $params));
+
+        //parse width and height
+        if(preg_match('#(\d+)(x(\d+))?#i',$param,$size)){
+            ($size[1]) ? $w = $size[1] : $w = NULL;
+            ($size[3]) ? $h = $size[3] : $h = NULL;
+        } else {
+            $w = 640;
+            $h = 360;
+        }
+
+        if(preg_match('/linkonly/i',$param)){
+            $linking = 'linkonly';
+        } else {
+            $linking = '';
+        }
+        
+        $params = explode('&',$param);
+        $poster = $this->getConf('GlobalVideoPreviewPicture');
+        foreach($params as $p){
+            if ($this->media_exists($p))
+                $poster = cleanID($p);
+        }
+        
+        /*
+        dbg(array(
+            'link'=>$link,
+            'src'=>$src,
+            'param'=>$param,
+            'size'=>$size,
+            'w'=>$w,
+            'h'=>$h,
+            'linking'=>$linking,
+            'align'=>$align,
+            'poster'=>$poster,
+        ));
+        */
+        
+        if ( preg_match('#^(https?|ftp)#i',$src) ) {
+            $type = 'externalmedia';
+        } else {
+            $type = 'internalmedia';
+        }
+        return array(
+            $src,
+            $align,
+            $w,
+            $h,
+            $linking,
+            $poster,
+            $type,
+            $link[1]
+            
+        );
+    }
+    
+    protected function media_exists($id) {
+        return @file_exists(mediaFN($id));
     }
 
     public function render($mode, Doku_Renderer $renderer, $data) {
 	  
+        // initalisize video class id 
+        static $counter = 1;  
+        
         if($mode != 'xhtml') {
 			return false;
 		}
-		 
-        list($state, $params) = $data;
-        list($video_align, $video_url, $parameters, $alternatetext) = $params;
-		
-		// get optional parameters
-		if(strpos ($parameters, "&") === false) {
-			$video_size = $parameters;  
-		} else { 
-			$video_size = substr($parameters, 0, strpos ($parameters, "&")); 
-			$video_picture = substr($parameters, strpos ($parameters, "&")+1); 
-		}
-		
-		// debug only
-		//$renderer->doc .= "video_align:" . $video_align. "<br />" . "video_url:" . $video_url. "<br />" ."video_size:" . $video_size. "<br />" ."video_picture:" . $video_picture. "<br />"."alternatetext:" . $alternatetext. "<br />" ;
-        //return false;
+
+        list($src,
+            $align,
+            $w,
+            $h,
+            $linking,
+            $poster,
+            $type,
+            $alt) = $data;
    
-        if($video_align == "center") {
-            $align = "margin: 0 auto;";
-        }
-        elseif($video_align == "left") {
-            $align = "float: left;";
-        }
-        elseif($video_align == "right") {
-            $align = "float: right;";
-        }
-        else { // Inline
-            $align = "";
+        if($type == 'internalmedia' && !$this->media_exists($src)) {
+            $renderer->internalmedia($src,$alt,$align,$w,$h);
+            return true;
         }
 
-        if(!substr_count($video_url, '/')) {
-            $video_url = ml($video_url);
+        if($linking == 'linkonly') {
+            //$alt = $alt?$alt:hsc($src);
+            // Check whether this is a local or remote image
+            if ( $type == 'externalmedia' ) {
+                $renderer->externalmedia($src,$alt,$align,$w,$h,NULL,$linking);
+            } else {
+                $renderer->internalmedia($src,$alt,$align,$w,$h,NULL,$linking);
+            }
+            return true;
         }
-
 		
-        if(substr($video_url, -3) != 'mp4') {
-            $renderer->doc .= "Error: The video must be in mp4 format.<br />" . $video_url;
-            return false;
-        }
-
-        if(is_null($video_size) or !substr_count($video_size, 'x')) {
-            $width  = 640;
-            $height = 360;
-        }
-        else {
-            $obj_dimensions = explode('x', $video_size);
-            $width  = $obj_dimensions[0];
-            $height = $obj_dimensions[1];
-        }
-
-        if(is_null($video_attr)) {
-            $attr = "";
-        }
-
-		// initalisize video class id 
-        static $counter = 1;  
 		
-		if($video_picture != "") {
-			// use custom preview picture
-			$picture = $video_picture;
-		} else {
-			// Use global preview picture  
-			$picture = $this->getConf('GlobalVideoPreviewPicture');	
-		}
-		
-		// use url or dokuwiki
-		if($picture != "" && !preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $picture)) { 
-			$picture = ml($picture);		
-		}
-		
+
 		// preprocess content to display on screen
-		$obj = '<video id="'.hsc($this->getConf('videoPlayerIDText')).'' . $counter . '" class="video-js vjs-default-skin" width="' . $width . '" height="' . $height . '" controls preload="'.hsc($this->getConf('VideoPreload')).'" poster="'.hsc($picture).	'" data-setup=\'{"techOrder": ["'.hsc($this->getConf('preferedVideoTechnologie')).'", "'.hsc($this->getConf('fallBackVideoTechnologie')).'"]}\'>';
+		$obj = '<video id="'.hsc($this->getConf('videoPlayerIDText')).'' . $counter . '" class="video-js vjs-default-skin media'.$align.'" '. 
+            ($w?('width="' .$w.'" '):''). 
+            ($h?('height="'.$h.'" '):''). 
+            ' controls preload="'.hsc($this->getConf('VideoPreload')).
+            '" '.($poster? 'poster="'.hsc(''.ml($poster)).'" ':'').
+            ' data-setup=\'{"techOrder": ["'.hsc($this->getConf('preferedVideoTechnologie')).'", "'.hsc($this->getConf('fallBackVideoTechnologie')).
+            '"]}\'>';
 
-        $obj = $obj . '<source src="' . $video_url . '" type="'.hsc($this->getConf('html5VideoType')).'"/></video>';
+        $obj .= '<source src="' . ml($src) . '" type="'.hsc($this->getConf('html5VideoType')).'" /></video>';
 		
 		// preprocess content to print
-		if($this->getConf('showThumbOnPrint') && $picture != "") {
+		if($this->getConf('showThumbOnPrint') && $poster != "") {
 			// Print Picture if specified 
-			$obj .= '<div class="vjs-alternatetext"><img src="' . $picture . '" alt="' . $alternatetext . '"  width="' . $width . '" height="' . $height . '"></div>'; 
-		} else if($alternatetext != "") { 
+			$obj .= '<div class="vjs-alternatetext"><img src="' . ml($poster) . '" alt="' . hsc($alt) . '"  '.
+                $w?('width="' .$w.'px" '):''. 
+                $h?('height="'.$h.'px" '):''.
+                '></div>'; 
+		} else if($alt != "") { 
 			// Print alternate text if specified
-			$obj .= '<div class="vjs-alternatetext">' . $alternatetext . '</div>'; 		
+			$obj .= '<div class="vjs-alternatetext">' . hsc($alt) . '</div>'; 		
 		} else  if($this->getConf('showStandardTextOnPrint')) {
 			// Print standard alternate text
 			$obj .= '<div class="vjs-alternatetext">' . hsc($this->getConf('standardAlternateTextPrint')) . '</div>'; 		 
 		}
- 
-		// set div algin
-		if($align != "") {
-            $obj = '<div style="width: ' . $width . 'px; ' . $align . '">' . $obj . '</div>';
-        }
-	 
+
 		// increment video class id on current page
 		$counter++;	
 		

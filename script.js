@@ -1,1 +1,3 @@
-/* DOKUWIKI:include script/video.min.js */
+/* DOKUWIKI:include script/video.js */
+
+            

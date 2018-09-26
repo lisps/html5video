@@ -344,7 +344,7 @@ _V_.extend({
     // Create the new function that changes the context
     var ret = function() {
       return fn.apply(context, arguments);
-    }
+    };
 
     // Allow for the ability to individualize this function
     // Needed in the case where multiple objects might share the same prototype
@@ -1813,7 +1813,7 @@ _V_.extend({
           var handlersCopy = [];
           _V_.each(handlers, function(handler, i){
             handlersCopy[i] = handler;
-          })
+          });
           
           for (var i = 0, l = handlersCopy.length; i < l; i++) {
             handlersCopy[i].call(elem, event);
@@ -2012,7 +2012,7 @@ _V_.extend({
   
   one: function(elem, type, fn) {
     _V_.addEvent(elem, type, function(){
-      _V_.removeEvent(elem, type, arguments.callee)
+      _V_.removeEvent(elem, type, arguments.callee);
       fn.apply(this, arguments);
     });
   }
@@ -2337,10 +2337,10 @@ _V_.Player = _V_.Component.extend({
       if (!this.support.timeupdateEvent) {
         this.player.manualTimeUpdatesOn();
       }
-    }
+    };
 
     // Grab tech-specific options from player options and add source and parent element to use.
-    var techOptions = _V_.merge({ source: source, parentEl: this.el }, this.options[techName])
+    var techOptions = _V_.merge({ source: source, parentEl: this.el }, this.options[techName]);
 
     if (source) {
       if (source.src == this.values.src && this.values.currentTime > 0) {
@@ -3248,7 +3248,16 @@ _V_.html5.isSupported = function(){
 };
 
 _V_.html5.canPlaySource = function(srcObj){
-  return !!document.createElement("video").canPlayType(srcObj.type);
+	var ret = false;
+	if(navigator.appVersion.indexOf("MSIE 9")!=-1)
+		return false;
+
+	try{
+		ret = !!document.createElement("video").canPlayType(srcObj.type);
+	} catch(e) {
+		return false;
+	}
+	return ret;
   // TODO: Check Type
   // If no Type, check ext
   // Check Media Type
@@ -3641,7 +3650,7 @@ _V_.flash.onError = function(swfID, err){
 
 // Flash Version Check
 _V_.flash.version = function(){
-  var version = '0,0,0'
+  var version = '0,0,0';
 
   // IE
   try {
@@ -3656,7 +3665,7 @@ _V_.flash.version = function(){
     } catch(e) {}
   }
   return version.split(",");
-}
+};
 
 // Flash embedding method. Only used in non-iframe mode
 _V_.flash.embed = function(swf, placeHolder, flashVars, params, attributes){
@@ -3687,7 +3696,7 @@ _V_.flash.getEmbedCode = function(swf, flashVars, params, attributes){
 
   var objTag = '<object type="application/x-shockwave-flash"',
       flashVarsString = '',
-      paramsString = ''
+      paramsString = '',
       attrsString = '';
 
   // Convert flash vars to string
@@ -3726,7 +3735,7 @@ _V_.flash.getEmbedCode = function(swf, flashVars, params, attributes){
   });
 
   return objTag + attrsString + '>' + paramsString + '</object>';
-}
+};
 // TEXT TRACKS
 // Text tracks are tracks of timed text events.
 //    Captions - text displayed over the video for the hearing impared
@@ -4040,7 +4049,7 @@ _V_.Track = _V_.Component.extend({
 
     // Break other (seconds, milliseconds, and flags) by spaces
     // TODO: Make additional cue layout settings work with flags
-    other = other.split(/\s+/)
+    other = other.split(/\s+/);
     // Remove seconds. Seconds is the first part before any spaces.
     seconds = other.splice(0,1)[0];
     // Could use either . or , for decimal
@@ -4256,7 +4265,7 @@ _V_.OffTextTrackMenuItem = _V_.TextTrackMenuItem.extend({
   init: function(player, options){
     // Create pseudo track info
     // Requires options.kind
-    options.track = { kind: options.kind, player: player, label: "Off" }
+    options.track = { kind: options.kind, player: player, label: "Off" };
     this._super(player, options);
   },
 
@@ -4310,7 +4319,7 @@ _V_.TextTrackButton = _V_.Button.extend({
     }));
 
     // Add an OFF menu item to turn all tracks off
-    menu.addItem(new _V_.OffTextTrackMenuItem(this.player, { kind: this.kind }))
+    menu.addItem(new _V_.OffTextTrackMenuItem(this.player, { kind: this.kind }));
 
     this.items = this.createItems();
 
