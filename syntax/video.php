@@ -39,7 +39,7 @@ class syntax_plugin_html5video_video extends DokuWiki_Syntax_Plugin {
 		$this->Lexer->addSpecialPattern('\{\{[^}]*(?:(?:mp4)|(?:ogv)|(?:webm))(?:\?(?:\d{2,4}x\d{2,4})?(?:\&[^\}]{1,255}.jpg|\&[^\}]{1,255}.png|\&[^\}]{1,255}.gif)?)? ?\|?[^\}]{1,255}\}\}',$mode,'plugin_html5video_video');
     }
 
-    public function handle($match, $state, $pos, &$handler){
+    public function handle($match, $state, $pos, Doku_Handler $handler){
         $params = substr($match, strlen('{{'), - strlen('}}')); //Strip markup
 		 
 		// removing optional '|' without alternate text
@@ -77,7 +77,7 @@ class syntax_plugin_html5video_video extends DokuWiki_Syntax_Plugin {
         return array(state, explode('?', $params));
     }
 
-    public function render($mode, &$renderer, $data) {
+    public function render($mode, Doku_Renderer $renderer, $data) {
 	  
         if($mode != 'xhtml') {
 			return false;
