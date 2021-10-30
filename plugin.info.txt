@@ -1,7 +1,7 @@
 base   html5video
-author lisps
-email  
-date   2018-09-26
+author lisps,peterfromearth
+email  coder@peterfromearth
+date   2021-10-30
 name   html5video plugin
 desc   Embeds mp4 video using video.js player
 url    http://dokuwiki.org/plugin:html5video2

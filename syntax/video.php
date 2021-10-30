@@ -11,15 +11,6 @@
  * Currently only supports h264 videos
  */
 
-// must be run within Dokuwiki
-if (!defined('DOKU_INC')) die();
-
-if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
-if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
-if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
-
-require_once DOKU_PLUGIN.'syntax.php';
-
 class syntax_plugin_html5video_video extends DokuWiki_Syntax_Plugin {
 
     public function getType() {
@@ -143,14 +134,14 @@ class syntax_plugin_html5video_video extends DokuWiki_Syntax_Plugin {
     }
 
     public function render($mode, Doku_Renderer $renderer, $data) {
-	  
+	    global $ID;
         // initalisize video class id 
         static $counter = 1;  
         
         if($mode != 'xhtml') {
 			return false;
 		}
-
+		
         list($src,
             $align,
             $w,
@@ -159,12 +150,15 @@ class syntax_plugin_html5video_video extends DokuWiki_Syntax_Plugin {
             $poster,
             $type,
             $alt) = $data;
-   
-        if($type == 'internalmedia' && !$this->media_exists($src)) {
+        
+        $exists = false;
+		resolve_mediaid(getNS($ID), $src, $exists);
+            
+		if($type == 'internalmedia' && !$exists) {
             $renderer->internalmedia($src,$alt,$align,$w,$h);
             return true;
         }
-
+        
         if($linking == 'linkonly') {
             //$alt = $alt?$alt:hsc($src);
             // Check whether this is a local or remote image
@@ -176,7 +170,7 @@ class syntax_plugin_html5video_video extends DokuWiki_Syntax_Plugin {
             return true;
         }
 		
-		
+        
 
 		// preprocess content to display on screen
 		$obj = '<video id="'.hsc($this->getConf('videoPlayerIDText')).'' . $counter . '" class="video-js vjs-default-skin media'.$align.'" '. 
