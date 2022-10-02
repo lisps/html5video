@@ -174,8 +174,8 @@ class syntax_plugin_html5video_video extends DokuWiki_Syntax_Plugin {
 
 		// preprocess content to display on screen
 		$obj = '<video id="'.hsc($this->getConf('videoPlayerIDText')).'' . $counter . '" class="video-js vjs-default-skin media'.$align.'" '. 
-            ($w?('width="' .$w.'" '):''). 
-            ($h?('height="'.$h.'" '):''). 
+            ($w ? ('width="'  .$w. '" ') : ''). 
+            ($h ? ('height="' .$h. '" ') : ''). 
             ' controls preload="'.hsc($this->getConf('VideoPreload')).
             '" '.($poster? 'poster="'.hsc(''.ml($poster)).'" ':'').
             ' data-setup=\'{"techOrder": ["'.hsc($this->getConf('preferedVideoTechnologie')).'", "'.hsc($this->getConf('fallBackVideoTechnologie')).
@@ -187,8 +187,8 @@ class syntax_plugin_html5video_video extends DokuWiki_Syntax_Plugin {
 		if($this->getConf('showThumbOnPrint') && $poster != "") {
 			// Print Picture if specified 
 			$obj .= '<div class="vjs-alternatetext"><img src="' . ml($poster) . '" alt="' . hsc($alt) . '"  '.
-                $w?('width="' .$w.'px" '):''. 
-                $h?('height="'.$h.'px" '):''.
+		($w ? ('width="'  .$w. 'px" ') : '').
+		($h ? ('height="' .$h. 'px" ') : '').
                 '></div>'; 
 		} else if($alt != "") { 
 			// Print alternate text if specified
